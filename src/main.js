@@ -5,6 +5,11 @@ let roundCount = 0;
 let drawnCards = [];
 let swapUsed = false;
 
+// Variáveis do temporizador
+let timerSeconds = 90; // 1 minuto e 30 segundos
+let timerInterval = null;
+let isTimerRunning = false;
+
 // Array com os caminhos das imagens das cartas
 const cardImages = [
   '/Card1.png',
@@ -101,6 +106,7 @@ function swapEquation() {
   
   // Atualizar apenas a exibição da carta
   updateCardDisplay(selectedCard);
+  resetTimer();
 }
 
 // Função para atualizar a interface com a carta sorteada
@@ -176,6 +182,9 @@ function updateCardDisplay(cardPath) {
 function drawCard() {
   // Incrementar o contador de rodadas antes de sortear
   roundCount++;
+  
+  // Resetar e iniciar o temporizador automaticamente
+  resetTimer();
   
   // Sortear uma carta aleatória
   const cardPath = drawRandomCard();
@@ -283,15 +292,83 @@ function resetApp() {
   swapUsed = false;
   
   updateRoundCounter();
+  resetTimer();
+}
+
+// Funções do temporizador
+function formatTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
+
+function updateTimerDisplay() {
+  const timerDisplay = document.getElementById('timer-display');
+  timerDisplay.textContent = formatTime(timerSeconds);
+  
+  // Adicionar classe de alerta quando restam 30 segundos ou menos
+  if (timerSeconds <= 30) {
+    timerDisplay.classList.add('timer-warning');
+  } else {
+    timerDisplay.classList.remove('timer-warning');
+  }
+  
+  // Adicionar classe crítica quando restam 10 segundos ou menos
+  if (timerSeconds <= 10) {
+    timerDisplay.classList.add('timer-critical');
+  } else {
+    timerDisplay.classList.remove('timer-critical');
+  }
+}
+
+function startTimer() {
+  if (!isTimerRunning && timerSeconds > 0) {
+    isTimerRunning = true;
+    timerInterval = setInterval(() => {
+      timerSeconds--;
+      updateTimerDisplay();
+      
+      if (timerSeconds <= 0) {
+        stopTimer();
+        alert('⏰ Tempo esgotado!');
+      }
+    }, 1000);
+  }
+}
+
+function pauseTimer() {
+  if (isTimerRunning) {
+    isTimerRunning = false;
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+}
+
+function resetTimer() {
+  pauseTimer();
+  timerSeconds = 90;
+  updateTimerDisplay();
+}
+
+function stopTimer() {
+  pauseTimer();
 }
 
 // Inicialização da aplicação
 document.querySelector('#app').innerHTML = `
+  <div class="timer-container">
+    <div class="timer-display" id="timer-display">01:30</div>
+    <div class="timer-controls">
+      <button id="timer-start">▶️</button>
+      <button id="timer-pause">⏸️</button>
+      <button id="timer-reset">🔄</button>
+    </div>
+  </div>
   <h1>Sorteio de Cartas</h1>
   <p id="round-counter">Rodada: 0 | Cartas restantes: ${cardImages.length + 1}</p>
   <div class="card-container"></div>
   <div class="buttons-container">
-    <button id="draw-button">Iniciar Sorteio</button>
+    <button id="draw-button">Sortear</button>
     <button id="swap-button" class="hidden">🔁 Troca Equação</button>
     <button id="reset-button" class="hidden">Resetar</button>
   </div>
@@ -301,3 +378,11 @@ document.querySelector('#app').innerHTML = `
 document.getElementById('draw-button').addEventListener('click', drawCard);
 document.getElementById('swap-button').addEventListener('click', swapEquation);
 document.getElementById('reset-button').addEventListener('click', resetApp);
+
+// Event listeners do temporizador
+document.getElementById('timer-start').addEventListener('click', startTimer);
+document.getElementById('timer-pause').addEventListener('click', pauseTimer);
+document.getElementById('timer-reset').addEventListener('click', resetTimer);
+
+// Inicializar o display do temporizador
+updateTimerDisplay();
