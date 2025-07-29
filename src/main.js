@@ -3,6 +3,7 @@ import './style.css'
 // Variáveis para controlar o jogo
 let roundCount = 0;
 let drawnCards = [];
+let swapUsed = false;
 
 // Array com os caminhos das imagens das cartas
 const cardImages = [
@@ -59,11 +60,51 @@ function drawRandomCard() {
   return selectedCard;
 }
 
+// Função para trocar equação (sortear nova carta sem afetar cálculos)
+function swapEquation() {
+  // Verificar se a troca já foi usada
+  if (swapUsed) {
+    alert('A troca de equação só pode ser usada uma vez por jogo!');
+    return;
+  }
+  
+  // Verificar se há uma carta sendo exibida
+  const cardImage = document.querySelector('.card-image');
+  if (!cardImage) {
+    alert('Primeiro você precisa sortear uma carta!');
+    return;
+  }
+  
+  // Filtrar apenas as cartas que ainda não foram sorteadas
+  const availableCards = cardImages.filter(card => !drawnCards.includes(card));
+  
+  // Verificar se ainda há cartas disponíveis para trocar
+  if (availableCards.length === 0) {
+    alert('Não há cartas disponíveis para trocar!');
+    return;
+  }
+  
+  // Sortear uma carta aleatória entre as disponíveis (sem adicionar ao drawnCards)
+  const randomIndex = Math.floor(Math.random() * availableCards.length);
+  const selectedCard = availableCards[randomIndex];
+  
+  // Marcar que a troca foi usada
+  swapUsed = true;
+  
+  // Remover o botão completamente do DOM
+  const swapButton = document.getElementById('swap-button');
+  swapButton.remove();
+  
+  // Atualizar apenas a exibição da carta
+  updateCardDisplay(selectedCard);
+}
+
 // Função para atualizar a interface com a carta sorteada
 function updateCardDisplay(cardPath) {
   const cardContainer = document.querySelector('.card-container');
   const cardImage = document.querySelector('.card-image');
   const resetButton = document.getElementById('reset-button');
+  const swapButton = document.getElementById('swap-button');
   
   // Se já existe uma imagem, atualize-a com uma animação
   if (cardImage) {
@@ -87,11 +128,39 @@ function updateCardDisplay(cardPath) {
       newCardImage.style.opacity = '1';
     }, 10);
     
-    // Mostrar o botão de reset quando a primeira carta for sorteada com animação
+    // Mostrar os botões quando a primeira carta for sorteada com animação
     resetButton.style.position = 'static';
     setTimeout(() => {
       resetButton.classList.remove('hidden');
     }, 10);
+    
+    // Mostrar o botão de troca apenas se não faltar apenas uma rodada
+    const availableCards = cardImages.filter(card => !drawnCards.includes(card));
+    const totalCardsRemaining = availableCards.length + (roundCount < 9 ? 1 : 0); // +1 para carta secreta se ainda não passou da rodada 9
+    
+    if (totalCardsRemaining > 1 && !swapUsed) {
+      swapButton.style.position = 'static';
+      setTimeout(() => {
+        swapButton.classList.remove('hidden');
+      }, 10);
+    }
+  }
+  
+  // Verificar se deve remover o botão quando restar apenas uma carta
+  if (cardImage) {
+    const availableCards = cardImages.filter(card => !drawnCards.includes(card));
+    const totalCardsRemaining = availableCards.length + (roundCount < 9 ? 1 : 0);
+    
+    if (totalCardsRemaining <= 1 && swapButton && !swapButton.classList.contains('hidden')) {
+      // Adicionar animação de fade-out antes de remover
+      swapButton.style.opacity = '0';
+      swapButton.style.transform = 'scale(0.8)';
+      swapButton.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      
+      setTimeout(() => {
+        swapButton.remove();
+      }, 300);
+    }
   }
   
   // Atualize o texto do botão
@@ -163,7 +232,21 @@ function resetApp() {
   const cardContainer = document.querySelector('.card-container');
   const cardImage = document.querySelector('.card-image');
   const resetButton = document.getElementById('reset-button');
+  let swapButton = document.getElementById('swap-button');
   const mainTitle = document.querySelector('h1');
+  
+  // Recriar o botão swap se ele foi removido do DOM
+  if (!swapButton) {
+    const buttonsContainer = document.querySelector('.buttons-container');
+    swapButton = document.createElement('button');
+    swapButton.id = 'swap-button';
+    swapButton.className = 'hidden';
+    swapButton.textContent = '🔁 Troca Equação';
+    swapButton.addEventListener('click', swapEquation);
+    
+    // Inserir o botão entre o botão de sortear e o de resetar
+    buttonsContainer.insertBefore(swapButton, resetButton);
+  }
   
   // Restaurar o título original
   mainTitle.innerHTML = 'Sorteio de Cartas';
@@ -176,10 +259,12 @@ function resetApp() {
       cardContainer.removeChild(cardImage);
     }, 300);
     
-    // Esconder o botão de reset com animação suave
+    // Esconder os botões com animação suave
     resetButton.classList.add('hidden');
+    swapButton.classList.add('hidden');
     setTimeout(() => {
       resetButton.style.position = 'absolute';
+      swapButton.style.position = 'absolute';
     }, 300);
   }
   
@@ -191,6 +276,8 @@ function resetApp() {
   // Resetar o contador de rodadas e limpar cartas sorteadas
   roundCount = 0;
   drawnCards = [];
+  swapUsed = false;
+  
   updateRoundCounter();
 }
 
@@ -201,10 +288,12 @@ document.querySelector('#app').innerHTML = `
   <div class="card-container"></div>
   <div class="buttons-container">
     <button id="draw-button">Sortear</button>
+    <button id="swap-button" class="hidden">🔁 Troca Equação</button>
     <button id="reset-button" class="hidden">Resetar</button>
   </div>
 `;
 
 // Adicionar eventos de clique aos botões
 document.getElementById('draw-button').addEventListener('click', drawCard);
+document.getElementById('swap-button').addEventListener('click', swapEquation);
 document.getElementById('reset-button').addEventListener('click', resetApp);

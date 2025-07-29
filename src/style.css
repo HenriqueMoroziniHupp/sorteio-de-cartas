@@ -80,6 +80,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 350px;
+  transform: rotate(270deg);
 }
 
 .card-image {
@@ -89,7 +90,6 @@ body {
   border-radius: 10px;
   transition: transform 0.3s ease, opacity 0.3s ease;
   opacity: 1;
-  transform: rotate(270deg);
 }
 
 .card-image:hover {
@@ -118,12 +118,20 @@ button {
   background-color: #4361ee;
 }
 
+#swap-button {
+  background-color: #06d6a0;
+}
+
 #reset-button {
   background-color: #ef476f;
 }
 
 #draw-button:hover {
   background-color: #3a56d4;
+}
+
+#swap-button:hover {
+  background-color: #05c794;
 }
 
 #reset-button:hover {
