@@ -93,7 +93,11 @@ function swapEquation() {
   
   // Remover o botão completamente do DOM
   const swapButton = document.getElementById('swap-button');
-  swapButton.remove();
+
+  swapButton.classList.add('hidden');
+  setTimeout(() => {
+    swapButton.remove();
+  }, 300);
   
   // Atualizar apenas a exibição da carta
   updateCardDisplay(selectedCard);
@@ -287,7 +291,7 @@ document.querySelector('#app').innerHTML = `
   <p id="round-counter">Rodada: 0 | Cartas restantes: ${cardImages.length + 1}</p>
   <div class="card-container"></div>
   <div class="buttons-container">
-    <button id="draw-button">Sortear</button>
+    <button id="draw-button">Iniciar Sorteio</button>
     <button id="swap-button" class="hidden">🔁 Troca Equação</button>
     <button id="reset-button" class="hidden">Resetar</button>
   </div>
