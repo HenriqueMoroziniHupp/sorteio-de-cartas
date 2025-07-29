@@ -1,0 +1,144 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.87);
+  background: linear-gradient(135deg, rgba(173, 216, 230, 0.3), rgba(255, 182, 193, 0.3));
+  min-height: 100vh;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1em;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+#round-counter {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #4361ee;
+  margin-top: -1rem;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.fire-round {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ff4500;
+  text-shadow: 0 0 5px rgba(255, 69, 0, 0.5);
+  animation: pulse 1.5s infinite alternate;
+  transition: color 0.5s ease, text-shadow 0.5s ease, transform 0.5s ease;
+}
+
+.secret-round {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #8a2be2;
+  text-shadow: 0 0 5px rgba(138, 43, 226, 0.5);
+  animation: pulse 1.5s infinite alternate;
+  transition: color 0.5s ease, text-shadow 0.5s ease, transform 0.5s ease;
+}
+
+@keyframes pulse {
+  from {
+    transform: scale(1);
+    text-shadow: 0 0 5px rgba(255, 69, 0, 0.5);
+  }
+  to {
+    transform: scale(1.05);
+    text-shadow: 0 0 15px rgba(255, 69, 0, 0.8), 0 0 20px rgba(255, 165, 0, 0.6);
+  }
+}
+
+.card-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 350px;
+}
+
+.card-image {
+  max-width: 250px;
+  max-height: 350px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  opacity: 1;
+  transform: rotate(270deg);
+}
+
+.card-image:hover {
+  transform: scale(1.05);
+}
+
+.buttons-container {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  color: white;
+  cursor: pointer;
+  transition: border-color 0.25s, background-color 0.25s, opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+#draw-button {
+  background-color: #4361ee;
+}
+
+#reset-button {
+  background-color: #ef476f;
+}
+
+#draw-button:hover {
+  background-color: #3a56d4;
+}
+
+#reset-button:hover {
+  background-color: #d64161;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+.hidden {
+  opacity: 0;
+  transform: scale(0.8);
+  visibility: hidden;
+  position: absolute;
+  pointer-events: none;
+}
