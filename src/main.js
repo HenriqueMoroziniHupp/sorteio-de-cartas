@@ -27,6 +27,17 @@ const cardImages = [
   '/Card13.png',
   '/Card14.png',
   '/Card15.png',
+  '/Card16.png',
+  '/Card17.png',
+  '/Card18.png',
+  '/Card19.png',
+  '/Card20.png',
+  '/Card21.png',
+  '/Card22.png',
+  '/Card23.png',
+  '/Card24.png',
+  '/Card25.png',
+  '/Card26.png',
 ];
 
 // Array com os caminhos das imagens das cartas secretas
@@ -34,12 +45,15 @@ const secretCardImages = [
   '/SecretCard1.png',
   '/SecretCard2.png',
   '/SecretCard3.png',
+  '/SecretCard4.png',
+  '/SecretCard5.png',
+  '/SecretCard6.png',
 ]
 
 // Função para sortear uma carta aleatória
 function drawRandomCard() {
-  // Verificar se é a rodada especial (rodada 9)
-  if (roundCount === 9) {
+  // Verificar se é a rodada especial (rodadas 9 e 25)
+  if (roundCount === 9 || roundCount === 25) {
     // Sortear uma carta secreta aleatória
     const randomIndex = Math.floor(Math.random() * secretCardImages.length);
     const selectedCard = secretCardImages[randomIndex];
@@ -207,20 +221,22 @@ function updateRoundCounter() {
   const roundCounter = document.getElementById('round-counter');
   const drawButton = document.getElementById('draw-button');
   const mainTitle = document.querySelector('h1');
-  // Incluir as cartas secretas no cálculo (+1 para a rodada especial)
-  const totalCards = cardImages.length + 1;
-  // Considerar se já passou pela rodada secreta (rodada 9)
-  const secretCardUsed = roundCount >= 9 ? 1 : 0;
-  const remainingCards = totalCards - drawnCards.length - secretCardUsed;
+  // Incluir as cartas secretas no cálculo (+2 para as duas rodadas especiais)
+  const totalCards = cardImages.length + 2;
+  // Considerar quantas rodadas secretas já foram usadas (rodadas 9 e 25)
+  let secretCardsUsed = 0;
+  if (roundCount >= 9) secretCardsUsed++;
+  if (roundCount >= 25) secretCardsUsed++;
+  const remainingCards = totalCards - drawnCards.length - secretCardsUsed;
   
   roundCounter.textContent = `Rodada: ${roundCount} | Cartas restantes: ${remainingCards}`;
   
-  // Verificar se é a rodada de fogo (rodada 5)
-  if (roundCount === 5) {
+  // Verificar se é a rodada de fogo (rodadas 5 e 15)
+  if (roundCount === 5 || roundCount === 15) {
     // Substituir o título principal pelo título da rodada de fogo
     mainTitle.innerHTML = '🔥 Rodada de Fogo 🔥';
     mainTitle.classList.add('fire-round');
-  } else if (roundCount === 9) {
+  } else if (roundCount === 9 || roundCount === 25) {
     // Substituir o título principal pelo título da rodada secreta
     mainTitle.innerHTML = '🎭 Desafio Secreto 🎭';
     mainTitle.classList.add('secret-round');
@@ -365,7 +381,7 @@ document.querySelector('#app').innerHTML = `
     </div>
   </div>
   <h1>Sorteio de Cartas</h1>
-  <p id="round-counter">Rodada: 0 | Cartas restantes: ${cardImages.length + 1}</p>
+  <p id="round-counter">Rodada: 0 | Cartas restantes: ${cardImages.length + 2}</p>
   <div class="card-container"></div>
   <div class="buttons-container">
     <button id="draw-button">Sortear</button>
